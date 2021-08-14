@@ -1,0 +1,6 @@
+module Pods_Sleaning {
+  umbrella header "Pods-Sleaning-umbrella.h"
+
+  export *
+  module * { export * }
+}
