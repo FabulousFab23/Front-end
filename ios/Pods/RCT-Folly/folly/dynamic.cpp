@@ -30,17 +30,18 @@ namespace folly {
 
 //////////////////////////////////////////////////////////////////////
 
-#define FOLLY_DYNAMIC_DEF_TYPEINFO(T, str)            \
-  const char* const dynamic::TypeInfo<T>::name = str; \
+#define FOLLY_DYNAMIC_DEF_TYPEINFO(T)                 \
+  constexpr const char* dynamic::TypeInfo<T>::name;   \
+  constexpr dynamic::Type dynamic::TypeInfo<T>::type; \
   //
 
-FOLLY_DYNAMIC_DEF_TYPEINFO(std::nullptr_t, "null")
-FOLLY_DYNAMIC_DEF_TYPEINFO(bool, "boolean")
-FOLLY_DYNAMIC_DEF_TYPEINFO(std::string, "string")
-FOLLY_DYNAMIC_DEF_TYPEINFO(dynamic::Array, "array")
-FOLLY_DYNAMIC_DEF_TYPEINFO(double, "double")
-FOLLY_DYNAMIC_DEF_TYPEINFO(int64_t, "int64")
-FOLLY_DYNAMIC_DEF_TYPEINFO(dynamic::ObjectImpl, "object")
+FOLLY_DYNAMIC_DEF_TYPEINFO(std::nullptr_t)
+FOLLY_DYNAMIC_DEF_TYPEINFO(bool)
+FOLLY_DYNAMIC_DEF_TYPEINFO(std::string)
+FOLLY_DYNAMIC_DEF_TYPEINFO(dynamic::Array)
+FOLLY_DYNAMIC_DEF_TYPEINFO(double)
+FOLLY_DYNAMIC_DEF_TYPEINFO(int64_t)
+FOLLY_DYNAMIC_DEF_TYPEINFO(dynamic::ObjectImpl)
 
 #undef FOLLY_DYNAMIC_DEF_TYPEINFO
 
@@ -55,7 +56,9 @@ TypeError::TypeError(const std::string& expected, dynamic::Type actual)
           dynamic::typeName(actual))) {}
 
 TypeError::TypeError(
-    const std::string& expected, dynamic::Type actual1, dynamic::Type actual2)
+    const std::string& expected,
+    dynamic::Type actual1,
+    dynamic::Type actual2)
     : std::runtime_error(sformat(
           "TypeError: expected dynamic types `{}, but had types `{}' and `{}'",
           expected,
@@ -331,7 +334,7 @@ void dynamic::destroy() noexcept {
 }
 
 dynamic dynamic::merge_diff(const dynamic& source, const dynamic& target) {
-  if (!source.isObject() || !target.isObject()) {
+  if (!source.isObject() || source.type() != target.type()) {
     return target;
   }
 
@@ -343,16 +346,7 @@ dynamic dynamic::merge_diff(const dynamic& source, const dynamic& target) {
     if (it == source.items().end()) {
       diff[pair.first] = pair.second;
     } else {
-      const auto& ssource = it->second;
-      const auto& starget = pair.second;
-      if (ssource.isObject() && starget.isObject()) {
-        auto sdiff = merge_diff(ssource, starget);
-        if (!sdiff.empty()) {
-          diff[pair.first] = std::move(sdiff);
-        }
-      } else if (ssource != starget) {
-        diff[pair.first] = merge_diff(ssource, starget);
-      }
+      diff[pair.first] = merge_diff(source[pair.first], target[pair.first]);
     }
   }
 

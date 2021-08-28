@@ -26,12 +26,30 @@
 
 #include <folly/Conv.h>
 #include <folly/ExceptionString.h>
+#include <folly/FBString.h>
 #include <folly/Portability.h>
 #include <folly/Range.h>
 #include <folly/ScopeGuard.h>
 #include <folly/Traits.h>
 
+// Compatibility function, to make sure toStdString(s) can be called
+// to convert a std::string or fbstring variable s into type std::string
+// with very little overhead if s was already std::string
 namespace folly {
+
+inline std::string toStdString(const folly::fbstring& s) {
+  return std::string(s.data(), s.size());
+}
+
+inline const std::string& toStdString(const std::string& s) {
+  return s;
+}
+
+// If called with a temporary, the compiler will select this overload instead
+// of the above, so we don't return a (lvalue) reference to a temporary.
+inline std::string&& toStdString(std::string&& s) {
+  return std::move(s);
+}
 
 /**
  * C-Escape a string, making it suitable for representation as a C string
@@ -70,11 +88,9 @@ String cEscape(StringPiece str) {
  *
  * Recognizes the standard C escape sequences:
  *
- * \code
  * \' \" \? \\ \a \b \f \n \r \t \v
  * \[0-7]+
  * \x[0-9a-fA-F]+
- * \endcode
  *
  * In strict mode (default), throws std::invalid_argument if it encounters
  * an unrecognized escape sequence.  In non-strict mode, it leaves
@@ -109,7 +125,9 @@ enum class UriEscapeMode : unsigned char {
 };
 template <class String>
 void uriEscape(
-    StringPiece str, String& out, UriEscapeMode mode = UriEscapeMode::ALL);
+    StringPiece str,
+    String& out,
+    UriEscapeMode mode = UriEscapeMode::ALL);
 
 /**
  * Similar to uriEscape above, but returns the escaped string.
@@ -129,7 +147,9 @@ String uriEscape(StringPiece str, UriEscapeMode mode = UriEscapeMode::ALL) {
  */
 template <class String>
 void uriUnescape(
-    StringPiece str, String& out, UriEscapeMode mode = UriEscapeMode::ALL);
+    StringPiece str,
+    String& out,
+    UriEscapeMode mode = UriEscapeMode::ALL);
 
 /**
  * Similar to uriUnescape above, but returns the unescaped string.
@@ -155,8 +175,9 @@ void stringPrintf(std::string* out, FOLLY_PRINTF_FORMAT const char* format, ...)
     FOLLY_PRINTF_FORMAT_ATTR(2, 3);
 
 std::string& stringAppendf(
-    std::string* output, FOLLY_PRINTF_FORMAT const char* format, ...)
-    FOLLY_PRINTF_FORMAT_ATTR(2, 3);
+    std::string* output,
+    FOLLY_PRINTF_FORMAT const char* format,
+    ...) FOLLY_PRINTF_FORMAT_ATTR(2, 3);
 
 /**
  * Similar to stringPrintf, but accepts a va_list argument.
@@ -189,7 +210,9 @@ std::string& stringVAppendf(std::string* out, const char* format, va_list ap);
  */
 template <class OutputString>
 void backslashify(
-    folly::StringPiece input, OutputString& output, bool hex_style = false);
+    folly::StringPiece input,
+    OutputString& output,
+    bool hex_style = false);
 
 template <class OutputString = std::string>
 OutputString backslashify(StringPiece input, bool hex_style = false) {
@@ -228,7 +251,9 @@ String humanify(const String& input) {
  */
 template <class InputString, class OutputString>
 bool hexlify(
-    const InputString& input, OutputString& output, bool append = false);
+    const InputString& input,
+    OutputString& output,
+    bool append = false);
 
 template <class OutputString = std::string>
 OutputString hexlify(ByteRange input) {
@@ -322,7 +347,8 @@ std::string prettyPrint(double val, PrettyType, bool addSpace = true);
  * 'abc' => throws std::range_error
  */
 double prettyToDouble(
-    folly::StringPiece* const prettyString, const PrettyType type);
+    folly::StringPiece* const prettyString,
+    const PrettyType type);
 
 /**
  * Same as prettyToDouble(folly::StringPiece*, PrettyType), but
@@ -354,11 +380,11 @@ void hexDump(const void* ptr, size_t size, OutIt out);
 std::string hexDump(const void* ptr, size_t size);
 
 /**
- * Return a string containing the description of the given errno value.
+ * Return a fbstring containing the description of the given errno value.
  * Takes care not to overwrite the actual system errno, so calling
  * errnoStr(errno) is valid.
  */
-std::string errnoStr(int err);
+fbstring errnoStr(int err);
 
 /*
  * Split a string into a list of tokens by delimiter.
@@ -505,7 +531,8 @@ std::string join(const Delim& delimiter, const Container& container) {
 
 template <class Delim, class Value>
 std::string join(
-    const Delim& delimiter, const std::initializer_list<Value>& values) {
+    const Delim& delimiter,
+    const std::initializer_list<Value>& values) {
   std::string output;
   join(delimiter, values.begin(), values.end(), output);
   return output;

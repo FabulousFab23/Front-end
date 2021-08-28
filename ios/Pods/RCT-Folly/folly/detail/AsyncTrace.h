@@ -15,19 +15,12 @@
  */
 
 #pragma once
-
-#include <chrono>
-
 #include <folly/Optional.h>
 
 namespace folly {
 class Executor;
 class IOExecutor;
 namespace async_tracing {
-enum class DiscardHasDeferred {
-  NO_EXECUTOR,
-  DEFERRED_EXECUTOR,
-};
 void logSetGlobalCPUExecutor(Executor*) noexcept;
 void logSetGlobalCPUExecutorToImmutable() noexcept;
 void logGetGlobalCPUExecutor(Executor*) noexcept;
@@ -37,8 +30,5 @@ void logGetGlobalIOExecutor(IOExecutor*) noexcept;
 void logGetImmutableIOExecutor(IOExecutor*) noexcept;
 void logSemiFutureVia(Executor*, Executor*) noexcept;
 void logFutureVia(Executor*, Executor*) noexcept;
-void logBlockingOperation(std::chrono::milliseconds) noexcept;
-void logSemiFutureDiscard(
-    DiscardHasDeferred /* hasDeferredExecutor */) noexcept;
 } // namespace async_tracing
 } // namespace folly

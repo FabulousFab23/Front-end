@@ -22,7 +22,6 @@
 #include <vector>
 
 #include <folly/detail/FileUtilDetail.h>
-#include <folly/detail/FileUtilVectorDetail.h>
 #include <folly/net/NetOps.h>
 #include <folly/portability/Fcntl.h>
 #include <folly/portability/Sockets.h>
@@ -148,7 +147,6 @@ ssize_t pwriteFull(int fd, const void* buf, size_t count, off_t offset) {
   return wrapFull(pwrite, fd, const_cast<void*>(buf), count, offset);
 }
 
-#ifndef _WIN32
 ssize_t readvFull(int fd, iovec* iov, int count) {
   return wrapvFull(readv, fd, iov, count);
 }
@@ -164,37 +162,12 @@ ssize_t writevFull(int fd, iovec* iov, int count) {
 ssize_t pwritevFull(int fd, iovec* iov, int count, off_t offset) {
   return wrapvFull(pwritev, fd, iov, count, offset);
 }
-#else // _WIN32
-
-// On Windows, the *vFull() functions wrap the simple read/pread/write/pwrite
-// functions.  While folly/portability/SysUio.cpp does define readv() and
-// writev() implementations for Windows, these attempt to lock the file to
-// provide atomicity.  The *vFull() functions do not provide any atomicity
-// guarantees, so we can avoid the locking logic.
-
-ssize_t readvFull(int fd, iovec* iov, int count) {
-  return wrapvFull(read, fd, iov, count);
-}
-
-ssize_t preadvFull(int fd, iovec* iov, int count, off_t offset) {
-  return wrapvFull(pread, fd, iov, count, offset);
-}
-
-ssize_t writevFull(int fd, iovec* iov, int count) {
-  return wrapvFull(write, fd, iov, count);
-}
-
-ssize_t pwritevFull(int fd, iovec* iov, int count, off_t offset) {
-  return wrapvFull(pwrite, fd, iov, count, offset);
-}
-#endif // _WIN32
 
 int writeFileAtomicNoThrow(
     StringPiece filename,
     iovec* iov,
     int count,
-    mode_t permissions,
-    SyncType syncType) {
+    mode_t permissions) {
   // We write the data to a temporary file name first, then atomically rename
   // it into place.  This ensures that the file contents will always be valid,
   // even if we crash or are killed partway through writing out data.
@@ -240,15 +213,6 @@ int writeFileAtomicNoThrow(
     return errno;
   }
 
-  // To guarantee atomicity across power failues on POSIX file systems,
-  // the temporary file must be explicitly sync'ed before the rename.
-  if (syncType == SyncType::WITH_SYNC) {
-    rc = fsyncNoInt(tmpFD);
-    if (rc == -1) {
-      return errno;
-    }
-  }
-
   // Close the file before renaming to make sure all data has
   // been successfully written.
   rc = close(tmpFD);
@@ -269,32 +233,26 @@ void writeFileAtomic(
     StringPiece filename,
     iovec* iov,
     int count,
-    mode_t permissions,
-    SyncType syncType) {
-  auto rc = writeFileAtomicNoThrow(filename, iov, count, permissions, syncType);
+    mode_t permissions) {
+  auto rc = writeFileAtomicNoThrow(filename, iov, count, permissions);
   if (rc != 0) {
     auto msg = std::string(__func__) + "() failed to update " + filename.str();
     throw std::system_error(rc, std::generic_category(), msg);
   }
 }
 
-void writeFileAtomic(
-    StringPiece filename,
-    ByteRange data,
-    mode_t permissions,
-    SyncType syncType) {
+void writeFileAtomic(StringPiece filename, ByteRange data, mode_t permissions) {
   iovec iov;
   iov.iov_base = const_cast<unsigned char*>(data.data());
   iov.iov_len = data.size();
-  writeFileAtomic(filename, &iov, 1, permissions, syncType);
+  writeFileAtomic(filename, &iov, 1, permissions);
 }
 
 void writeFileAtomic(
     StringPiece filename,
     StringPiece data,
-    mode_t permissions,
-    SyncType syncType) {
-  writeFileAtomic(filename, ByteRange(data), permissions, syncType);
+    mode_t permissions) {
+  writeFileAtomic(filename, ByteRange(data), permissions);
 }
 
 } // namespace folly

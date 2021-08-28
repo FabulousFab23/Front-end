@@ -167,7 +167,10 @@ StringPiece rtrimWhitespace(StringPiece sp) {
 namespace {
 
 int stringAppendfImplHelper(
-    char* buf, size_t bufsize, const char* format, va_list args) {
+    char* buf,
+    size_t bufsize,
+    const char* format,
+    va_list args) {
   va_list args_copy;
   va_copy(args_copy, args);
   int bytes_used = vsnprintf(buf, bufsize, format, args_copy);
@@ -220,7 +223,9 @@ void stringAppendfImpl(std::string& output, const char* format, va_list args) {
 std::string stringPrintf(const char* format, ...) {
   va_list ap;
   va_start(ap, format);
-  SCOPE_EXIT { va_end(ap); };
+  SCOPE_EXIT {
+    va_end(ap);
+  };
   return stringVPrintf(format, ap);
 }
 
@@ -235,12 +240,14 @@ std::string stringVPrintf(const char* format, va_list ap) {
 std::string& stringAppendf(std::string* output, const char* format, ...) {
   va_list ap;
   va_start(ap, format);
-  SCOPE_EXIT { va_end(ap); };
+  SCOPE_EXIT {
+    va_end(ap);
+  };
   return stringVAppendf(output, format, ap);
 }
 
-std::string& stringVAppendf(
-    std::string* output, const char* format, va_list ap) {
+std::string&
+stringVAppendf(std::string* output, const char* format, va_list ap) {
   stringAppendfImpl(*output, format, ap);
   return *output;
 }
@@ -248,7 +255,9 @@ std::string& stringVAppendf(
 void stringPrintf(std::string* output, const char* format, ...) {
   va_list ap;
   va_start(ap, format);
-  SCOPE_EXIT { va_end(ap); };
+  SCOPE_EXIT {
+    va_end(ap);
+  };
   return stringVPrintf(output, format, ap);
 }
 
@@ -405,7 +414,8 @@ std::string prettyPrint(double val, PrettyType type, bool addSpace) {
 // TODO:
 // 1) Benchmark & optimize
 double prettyToDouble(
-    folly::StringPiece* const prettyString, const PrettyType type) {
+    folly::StringPiece* const prettyString,
+    const PrettyType type) {
   auto value = folly::to<double>(prettyString);
   while (!prettyString->empty() && std::isspace(prettyString->front())) {
     prettyString->advance(1); // Skipping spaces between number and suffix
@@ -462,14 +472,17 @@ std::string hexDump(const void* ptr, size_t size) {
 // selects proper function.
 
 FOLLY_MAYBE_UNUSED
-static std::string invoke_strerror_r(
-    int (*strerror_r)(int, char*, size_t), int err, char* buf, size_t buflen) {
+static fbstring invoke_strerror_r(
+    int (*strerror_r)(int, char*, size_t),
+    int err,
+    char* buf,
+    size_t buflen) {
   // Using XSI-compatible strerror_r
   int r = strerror_r(err, buf, buflen);
 
   // OSX/FreeBSD use EINVAL and Linux uses -1 so just check for non-zero
   if (r != 0) {
-    return to<std::string>(
+    return to<fbstring>(
         "Unknown error ", err, " (strerror_r failed with error ", errno, ")");
   } else {
     return buf;
@@ -477,7 +490,7 @@ static std::string invoke_strerror_r(
 }
 
 FOLLY_MAYBE_UNUSED
-static std::string invoke_strerror_r(
+static fbstring invoke_strerror_r(
     char* (*strerror_r)(int, char*, size_t),
     int err,
     char* buf,
@@ -486,7 +499,7 @@ static std::string invoke_strerror_r(
   return strerror_r(err, buf, buflen);
 }
 
-std::string errnoStr(int err) {
+fbstring errnoStr(int err) {
   int savedErrno = errno;
 
   // Ensure that we reset errno upon exit.
@@ -495,7 +508,7 @@ std::string errnoStr(int err) {
   char buf[1024];
   buf[0] = '\0';
 
-  std::string result;
+  fbstring result;
 
   // https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/strerror_r.3.html
   // http://www.kernel.org/doc/man-pages/online/pages/man3/strerror.3.html
@@ -505,7 +518,7 @@ std::string errnoStr(int err) {
   // with strerrorlen_s). Note strerror_r and _s have swapped args.
   int r = strerror_s(buf, sizeof(buf), err);
   if (r != 0) {
-    result = to<std::string>(
+    result = to<fbstring>(
         "Unknown error ", err, " (strerror_r failed with error ", errno, ")");
   } else {
     result.assign(buf);
@@ -661,8 +674,8 @@ void toLowerAscii(char* str, size_t length) {
 
 namespace detail {
 
-size_t hexDumpLine(
-    const void* ptr, size_t offset, size_t size, std::string& line) {
+size_t
+hexDumpLine(const void* ptr, size_t offset, size_t size, std::string& line) {
   static char hexValues[] = "0123456789abcdef";
   // Line layout:
   // 8: address

@@ -1,17 +1,17 @@
 {
   "name": "ReactCommon",
   "module_name": "ReactCommon",
-  "version": "0.65.1",
+  "version": "0.64.2",
   "summary": "-",
   "homepage": "https://reactnative.dev/",
   "license": "MIT",
   "authors": "Facebook, Inc. and its affiliates",
   "platforms": {
-    "ios": "11.0"
+    "ios": "10.0"
   },
   "source": {
     "git": "https://github.com/facebook/react-native.git",
-    "tag": "v0.65.1"
+    "tag": "v0.64.2"
   },
   "header_dir": "ReactCommon",
   "compiler_flags": "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -Wno-comma -Wno-shorten-64-to-32 -Wno-documentation",
@@ -22,29 +22,25 @@
   },
   "subspecs": [
     {
-      "name": "react_debug_core",
-      "source_files": "react/debug/*.{cpp,h}"
-    },
-    {
       "name": "turbomodule",
       "dependencies": {
         "React-callinvoker": [
-          "0.65.1"
+          "0.64.2"
         ],
         "React-perflogger": [
-          "0.65.1"
+          "0.64.2"
         ],
         "React-Core": [
-          "0.65.1"
+          "0.64.2"
         ],
         "React-cxxreact": [
-          "0.65.1"
+          "0.64.2"
         ],
         "React-jsi": [
-          "0.65.1"
+          "0.64.2"
         ],
         "RCT-Folly": [
-          "2021.04.26.00"
+          "2020.01.13.00"
         ],
         "DoubleConversion": [
 
@@ -69,7 +65,7 @@
           ],
           "dependencies": {
             "ReactCommon/turbomodule/core": [
-              "0.65.1"
+              "0.64.2"
             ]
           }
         }

@@ -18,14 +18,28 @@
 
 #include <folly/net/NetOps.h>
 
-#include <folly/Portability.h>
-
 namespace folly {
 namespace portability {
 namespace sockets {
-
-#ifdef _WIN32
-
+#ifndef _WIN32
+using ::accept;
+using ::bind;
+using ::connect;
+using ::getpeername;
+using ::getsockname;
+using ::getsockopt;
+using ::inet_ntop;
+using ::listen;
+using ::poll;
+using ::recv;
+using ::recvfrom;
+using ::send;
+using ::sendmsg;
+using ::sendto;
+using ::setsockopt;
+using ::shutdown;
+using ::socket;
+#else
 // Some Windows specific helper functions.
 bool is_fh_socket(int fh);
 SOCKET fd_to_socket(int fd);
@@ -68,7 +82,11 @@ ssize_t sendto(
     socklen_t tolen);
 ssize_t sendmsg(int socket, const struct msghdr* message, int flags);
 int setsockopt(
-    int s, int level, int optname, const void* optval, socklen_t optlen);
+    int s,
+    int level,
+    int optname,
+    const void* optval,
+    socklen_t optlen);
 int shutdown(int s, int how);
 
 // This is the only function that _must_ be referenced via the namespace
@@ -114,43 +132,18 @@ ssize_t sendto(
     const sockaddr* to,
     socklen_t tolen);
 int setsockopt(
-    int s, int level, int optname, const char* optval, socklen_t optlen);
-
-#elif defined(__XROS__)
-
-// None of these are implemented or referenced right now.
-
-#else
-
-using ::accept;
-using ::bind;
-using ::connect;
-using ::getpeername;
-using ::getsockname;
-using ::getsockopt;
-using ::inet_ntop;
-using ::listen;
-using ::poll;
-using ::recv;
-using ::recvfrom;
-using ::send;
-using ::sendmsg;
-using ::sendto;
-using ::setsockopt;
-using ::shutdown;
-using ::socket;
-
+    int s,
+    int level,
+    int optname,
+    const char* optval,
+    socklen_t optlen);
 #endif
-
 } // namespace sockets
 } // namespace portability
 } // namespace folly
 
 #ifdef _WIN32
 // Add our helpers to the overload set.
-FOLLY_PUSH_WARNING
-FOLLY_CLANG_DISABLE_WARNING("-Wheader-hygiene")
 /* using override */
 using namespace folly::portability::sockets;
-FOLLY_POP_WARNING
 #endif

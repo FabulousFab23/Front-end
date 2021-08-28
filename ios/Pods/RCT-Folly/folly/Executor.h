@@ -21,12 +21,13 @@
 #include <utility>
 
 #include <folly/Function.h>
-#include <folly/Optional.h>
-#include <folly/Range.h>
 #include <folly/Utility.h>
-#include <folly/lang/Exception.h>
 
 namespace folly {
+namespace pushmi {
+// derive from this for types that need to find operator|() overloads by ADL
+struct folly_pipeorigin {};
+} // namespace pushmi
 
 using Func = Function<void()>;
 
@@ -64,7 +65,9 @@ class Executor {
   /// This is up to the implementation to enforce
   virtual void addWithPriority(Func, int8_t priority);
 
-  virtual uint8_t getNumPriorities() const { return 1; }
+  virtual uint8_t getNumPriorities() const {
+    return 1;
+  }
 
   static const int8_t LO_PRI = SCHAR_MIN;
   static const int8_t MID_PRI = 0;
@@ -75,7 +78,7 @@ class Executor {
    * For any Executor that supports KeepAlive functionality, Executor's
    * destructor will block until all the KeepAlive objects associated with that
    * Executor are destroyed.
-   * For Executors that don't support the KeepAlive functionality, KeepAlive
+   * For Executors that don't support the KeepAlive funcionality, KeepAlive
    * doesn't provide such protection.
    *
    * KeepAlive should *always* be used instead of Executor*. KeepAlive can be
@@ -84,18 +87,14 @@ class Executor {
    * preserve the original Executor type.
    */
   template <typename ExecutorT = Executor>
-  class KeepAlive : private detail::ExecutorKeepAliveBase {
+  class KeepAlive : pushmi::folly_pipeorigin,
+                    private detail::ExecutorKeepAliveBase {
    public:
     using KeepAliveFunc = Function<void(KeepAlive&&)>;
 
     KeepAlive() = default;
 
     ~KeepAlive() {
-      static_assert(
-          std::is_standard_layout<KeepAlive>::value, "standard-layout");
-      static_assert(sizeof(KeepAlive) == sizeof(void*), "pointer size");
-      static_assert(alignof(KeepAlive) == alignof(void*), "pointer align");
-
       reset();
     }
 
@@ -125,7 +124,7 @@ class Executor {
       *this = getKeepAliveToken(executor);
     }
 
-    KeepAlive& operator=(KeepAlive&& other) noexcept {
+    KeepAlive& operator=(KeepAlive&& other) {
       reset();
       storage_ = std::exchange(other.storage_, 0);
       return *this;
@@ -139,7 +138,7 @@ class Executor {
         typename OtherExecutor,
         typename = typename std::enable_if<
             std::is_convertible<OtherExecutor*, ExecutorT*>::value>::type>
-    KeepAlive& operator=(KeepAlive<OtherExecutor>&& other) noexcept {
+    KeepAlive& operator=(KeepAlive<OtherExecutor>&& other) {
       return *this = KeepAlive(std::move(other));
     }
 
@@ -151,7 +150,7 @@ class Executor {
       return *this = KeepAlive(other);
     }
 
-    void reset() noexcept {
+    void reset() {
       if (Executor* executor = get()) {
         auto const flags = std::exchange(storage_, 0) & kFlagMask;
         if (!(flags & (kDummyFlag | kAliasFlag))) {
@@ -160,15 +159,21 @@ class Executor {
       }
     }
 
-    explicit operator bool() const { return storage_; }
+    explicit operator bool() const {
+      return storage_;
+    }
 
     ExecutorT* get() const {
       return reinterpret_cast<ExecutorT*>(storage_ & kExecutorMask);
     }
 
-    ExecutorT& operator*() const { return *get(); }
+    ExecutorT& operator*() const {
+      return *get();
+    }
 
-    ExecutorT* operator->() const { return get(); }
+    ExecutorT* operator->() const {
+      return get();
+    }
 
     KeepAlive copy() const {
       return isKeepAliveDummy(*this) //
@@ -176,7 +181,9 @@ class Executor {
           : getKeepAliveToken(get());
     }
 
-    KeepAlive get_alias() const { return KeepAlive(storage_ | kAliasFlag); }
+    KeepAlive get_alias() const {
+      return KeepAlive(storage_ | kAliasFlag);
+    }
 
     template <class KAF>
     void add(KAF&& f) && {
@@ -230,12 +237,6 @@ class Executor {
     return getKeepAliveToken(&executor);
   }
 
-  template <typename F>
-  FOLLY_ERASE static void invokeCatchingExns(char const* p, F f) noexcept {
-    auto h = [p](auto&... e) noexcept { invokeCatchingExnsLog(p, &e...); };
-    catch_exception([&] { catch_exception<std::exception const&>(f, h); }, h);
-  }
-
  protected:
   /**
    * Returns true if the KeepAlive is constructed from an executor that does
@@ -246,19 +247,12 @@ class Executor {
     return keepAlive.storage_ & KeepAlive<ExecutorT>::kDummyFlag;
   }
 
-  static bool keepAliveAcquire(Executor* executor) {
-    return executor->keepAliveAcquire();
-  }
-  static void keepAliveRelease(Executor* executor) {
-    return executor->keepAliveRelease();
-  }
-
   // Acquire a keep alive token. Should return false if keep-alive mechanism
   // is not supported.
-  virtual bool keepAliveAcquire() noexcept;
+  virtual bool keepAliveAcquire();
   // Release a keep alive token previously acquired by keepAliveAcquire().
   // Will never be called if keepAliveAcquire() returns false.
-  virtual void keepAliveRelease() noexcept;
+  virtual void keepAliveRelease();
 
   template <typename ExecutorT>
   static KeepAlive<ExecutorT> makeKeepAlive(ExecutorT* executor) {
@@ -269,9 +263,6 @@ class Executor {
   }
 
  private:
-  static void invokeCatchingExnsLog(
-      char const* prefix, std::exception const* ex = nullptr);
-
   template <typename ExecutorT>
   static KeepAlive<ExecutorT> makeKeepAliveDummy(ExecutorT* executor) {
     static_assert(
@@ -305,44 +296,5 @@ Executor::KeepAlive<ExecutorT> getKeepAliveToken(
     Executor::KeepAlive<ExecutorT>& ka) {
   return ka.copy();
 }
-
-struct ExecutorBlockingContext {
-  StringPiece name;
-};
-static_assert(
-    std::is_standard_layout<ExecutorBlockingContext>::value,
-    "non-standard layout");
-
-struct ExecutorBlockingList {
-  bool forbid;
-  ExecutorBlockingList* prev;
-  ExecutorBlockingContext curr;
-};
-static_assert(
-    std::is_standard_layout<ExecutorBlockingList>::value,
-    "non-standard layout");
-
-class ExecutorBlockingGuard {
- public:
-  struct PermitTag {};
-  struct TrackTag {};
-
-  ~ExecutorBlockingGuard();
-  ExecutorBlockingGuard() = delete;
-
-  explicit ExecutorBlockingGuard(PermitTag) noexcept;
-  explicit ExecutorBlockingGuard(TrackTag, StringPiece name) noexcept;
-
-  ExecutorBlockingGuard(ExecutorBlockingGuard&&) = delete;
-  ExecutorBlockingGuard(ExecutorBlockingGuard const&) = delete;
-
-  ExecutorBlockingGuard& operator=(ExecutorBlockingGuard const&) = delete;
-  ExecutorBlockingGuard& operator=(ExecutorBlockingGuard&&) = delete;
-
- private:
-  ExecutorBlockingList list_;
-};
-
-Optional<ExecutorBlockingContext> getExecutorBlockingContext() noexcept;
 
 } // namespace folly

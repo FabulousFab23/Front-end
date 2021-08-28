@@ -23,8 +23,6 @@
 #define SCHED_FIFO 1
 #define SCHED_RR 2
 
-#include <folly/Portability.h>
-
 namespace folly {
 namespace portability {
 namespace sched {
@@ -38,8 +36,5 @@ int sched_get_priority_max(int policy);
 } // namespace portability
 } // namespace folly
 
-FOLLY_PUSH_WARNING
-FOLLY_CLANG_DISABLE_WARNING("-Wheader-hygiene")
 /* using override */ using namespace folly::portability::sched;
-FOLLY_POP_WARNING
 #endif

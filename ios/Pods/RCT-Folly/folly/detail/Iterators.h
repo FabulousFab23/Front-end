@@ -20,8 +20,6 @@
 #include <iterator>
 #include <type_traits>
 
-#include <folly/portability/SysTypes.h>
-
 /*
  * This contains stripped-down workalikes of some Boost classes:
  *
@@ -79,9 +77,13 @@ class IteratorFacade {
   using difference_type = ssize_t;
   using iterator_category = Tag;
 
-  bool operator==(D const& rhs) const { return asDerivedConst().equal(rhs); }
+  bool operator==(D const& rhs) const {
+    return asDerivedConst().equal(rhs);
+  }
 
-  bool operator!=(D const& rhs) const { return !operator==(rhs); }
+  bool operator!=(D const& rhs) const {
+    return !operator==(rhs);
+  }
 
   /*
    * Allow for comparisons between this and an iterator of some other class.
@@ -91,11 +93,9 @@ class IteratorFacade {
    * this and the `operator==(D const&) const` method above.
    */
 
-  template <
-      class D2,
-      std::enable_if_t<!std::is_same<D, D2>::value, int> = 0,
-      std::enable_if_t<std::is_convertible<D, D2>::value, int> = 0>
-  bool operator==(D2 const& rhs) const {
+  template <class D2>
+  typename std::enable_if<std::is_convertible<D, D2>::value, bool>::type
+  operator==(D2 const& rhs) const {
     return D2(asDerivedConst()) == rhs;
   }
 
@@ -104,9 +104,13 @@ class IteratorFacade {
     return !operator==(rhs);
   }
 
-  V& operator*() const { return asDerivedConst().dereference(); }
+  V& operator*() const {
+    return asDerivedConst().dereference();
+  }
 
-  V* operator->() const { return std::addressof(operator*()); }
+  V* operator->() const {
+    return std::addressof(operator*());
+  }
 
   D& operator++() {
     asDerived().increment();
@@ -131,9 +135,13 @@ class IteratorFacade {
   }
 
  private:
-  D& asDerived() { return static_cast<D&>(*this); }
+  D& asDerived() {
+    return static_cast<D&>(*this);
+  }
 
-  D const& asDerivedConst() const { return static_cast<D const&>(*this); }
+  D const& asDerivedConst() const {
+    return static_cast<D const&>(*this);
+  }
 };
 
 /**
@@ -157,16 +165,28 @@ class IteratorAdaptor : public IteratorFacade<D, V, Tag> {
 
   explicit IteratorAdaptor(I base) : base_(base) {}
 
-  void increment() { ++base_; }
+  void increment() {
+    ++base_;
+  }
 
-  void decrement() { --base_; }
+  void decrement() {
+    --base_;
+  }
 
-  V& dereference() const { return *base_; }
+  V& dereference() const {
+    return *base_;
+  }
 
-  bool equal(D const& rhs) const { return base_ == rhs.base_; }
+  bool equal(D const& rhs) const {
+    return base_ == rhs.base_;
+  }
 
-  I const& base() const { return base_; }
-  I& base() { return base_; }
+  I const& base() const {
+    return base_;
+  }
+  I& base() {
+    return base_;
+  }
 
  private:
   I base_;

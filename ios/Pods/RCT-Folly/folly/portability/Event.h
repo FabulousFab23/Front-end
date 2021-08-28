@@ -25,20 +25,15 @@
 
 #ifdef _MSC_VER
 #include <event2/event_compat.h> // @manual
-// The signal_set macro from libevent 2 compat conflicts with the
-// boost::asio::signal_set function
-#undef signal_set
 #include <folly/portability/Fcntl.h>
-#endif
-
-// The signal_set macro from libevent 1.4.14b-stable conflicts with the
-// boost::asio::signal_set function
-#if _EVENT_NUMERIC_VERSION == 0x01040e00
-#undef signal_set
 #endif
 
 #include <folly/net/detail/SocketFileDescriptorMap.h>
 
 namespace folly {
-using libevent_fd_t = decltype(event::ev_fd);
+#ifdef _MSC_VER
+using libevent_fd_t = evutil_socket_t;
+#else
+using libevent_fd_t = int;
+#endif
 } // namespace folly
