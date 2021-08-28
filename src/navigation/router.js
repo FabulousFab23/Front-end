@@ -9,7 +9,7 @@ const Stack = createStackNavigator();
 const Router  = () => {
 
 return (
-  <NavigationContainer ref={navigationRef}>
+  <NavigationContainer>
     <Stack.Navigator>
           <Stack.Screen
             name={AppRoute.HOME}

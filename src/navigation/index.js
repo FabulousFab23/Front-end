@@ -5,7 +5,7 @@ export const AppRoute = {
   LOGIN:'Login',
   SIGN_UP:'Sign Up',
   FORGOT_PASSWORD:'Forgot Password',
-  HOME:"Home"
+  HOME:'Home'
 };
 
 export const navigationRef = React.createRef();
