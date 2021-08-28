@@ -1,6 +1,0 @@
-module Pods_Sleaning_SleaningTests {
-  umbrella header "Pods-Sleaning-SleaningTests-umbrella.h"
-
-  export *
-  module * { export * }
-}
