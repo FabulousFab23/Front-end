@@ -1,43 +1,45 @@
-import React from 'react';
-import {View, Text} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import styles from './styles';
-import VoccoIcon from './img/vocco_icon.svg';
-import {scale} from '../../../utils/dimension';
+import React, {useState} from 'react';
+import {View, Text, TextInput} from 'react-native';
 import Button from '../../../components/Button/Button';
+import HeaderBack from '../../../components/HeaderBack/HeaderBack';
 import {COLORS} from '../../../constants/colors';
-import CreatedBy from './components/created-by-component';
-import {AppRoute, navigate} from '../../../navigation';
+import styles from './styles';
 
 const LoginScreen = () => {
-  const goToRegistration = () => {
-    navigate(AppRoute.REGISTER, {});
-  };
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.wrapper}>
-        <View style={styles.titleContainer}>
-          <VoccoIcon width={scale(85)} height={scale(23)} />
-          <Text style={styles.title}>Tell your stories</Text>
-        </View>
-      </View>
-      <CreatedBy />
-      <View style={styles.buttons}>
-        <Button
-          title={'LOG IN'}
-          textColor={COLORS.BLACK}
-          buttonColor={COLORS.WHITE}
-          onPress={goToRegistration}
+    <>
+      <HeaderBack />
+      <View style={styles.container}>
+        <Text style={styles.title}>Login</Text>
+        <TextInput
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          placeholder={'Your email'}
+          placeholderTextColor={COLORS.WHITE}
+          keyboardType="email-address"
+          autoCapitalize={false}
+        />
+        <TextInput
+          style={[styles.input, {marginBottom: 30}]}
+          value={password}
+          placeholder={'Your password'}
+          placeholderTextColor={COLORS.WHITE}
+          onChangeText={setPassword}
+          autoCapitalize={false}
+          secureTextEntry={true}
         />
         <Button
-          title={'REGISTER'}
           textColor={COLORS.WHITE}
-          onPress={goToRegistration}
-          buttonColor={COLORS.ORANGE}
+          title={'NEXT'}
+          buttonColor={COLORS.BLACK}
+          isFull={true}
         />
       </View>
-    </SafeAreaView>
+    </>
   );
 };
 
