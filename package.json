@@ -22,10 +22,12 @@
     "react-native": "0.64.2",
     "react-native-bootsplash": "^3.2.4",
     "react-native-gesture-handler": "^1.10.3",
+    "react-native-pager-view": "^5.4.1",
     "react-native-safe-area-context": "^3.3.0",
     "react-native-screens": "^3.6.0",
     "react-native-svg": "^12.1.1",
     "react-native-svg-transformer": "^0.14.3",
+    "react-native-tab-view": "^3.1.1",
     "react-native-toast-message": "^1.4.9",
     "redux": "^4.1.1",
     "redux-thunk": "^2.3.0"

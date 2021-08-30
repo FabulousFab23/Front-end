@@ -1,12 +1,15 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, SafeAreaView} from 'react-native';
+import {COLORS} from '../../constants/colors';
+import styles from './styles';
 
 const HomeScreen = () => {
-  return(
-    <View>
-      <Text>Home</Text>
-    </View>
-  )
-}
+  return (
+    <>
+      <SafeAreaView style={{flex: 0, backgroundColor: COLORS.MAIN_BLACK}} />
+      <View style={styles.container}></View>
+    </>
+  );
+};
 
 export default HomeScreen;

@@ -1,13 +1,18 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput} from 'react-native';
+import {View, Text, TextInput, Pressable} from 'react-native';
 import Button from '../../../components/Button/Button';
 import HeaderBack from '../../../components/HeaderBack/HeaderBack';
 import {COLORS} from '../../../constants/colors';
+import {AppRoute, navigate} from '../../../navigation';
 import styles from './styles';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleForgotPassword = () => {
+    navigate(AppRoute.FORGOT_PASSWORD, {});
+  };
 
   return (
     <>
@@ -38,6 +43,12 @@ const LoginScreen = () => {
           buttonColor={COLORS.BLACK}
           isFull={true}
         />
+        <Pressable
+          style={styles.passwordLostContainer}
+          hitSlop={5}
+          onPress={handleForgotPassword}>
+          <Text style={styles.passwordLostText}>Forgot password</Text>
+        </Pressable>
       </View>
     </>
   );

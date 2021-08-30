@@ -26,6 +26,14 @@ const styles = StyleSheet.create({
     paddingLeft: 17,
     marginBottom: verticalScale(16),
   },
+  passwordLostText: {
+    color: COLORS.GREY,
+    fontSize: scale(15),
+  },
+  passwordLostContainer: {
+    alignSelf: 'center',
+    marginTop: 10,
+  },
 });
 
 export default styles;

@@ -6,13 +6,14 @@ import HomeScreen from '../screens/home-screen/home-screen';
 import RegisterScreen from '../screens/auth-flow/register-screen/register-screen';
 import AuthScreen from '../screens/auth-flow/auth-screen/auth-screen';
 import LoginScreen from '../screens/auth-flow/login-screen/login-screen';
+import ForgotPasswordScreen from '../screens/auth-flow/forgot-password-screen/forgot-password-screen';
 
 const Stack = createStackNavigator();
 
 const Router = () => {
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName={AppRoute.HOME}>
         <Stack.Screen
           name={AppRoute.AUTH}
           component={AuthScreen}
@@ -26,6 +27,11 @@ const Router = () => {
         <Stack.Screen
           name={AppRoute.LOGIN}
           component={LoginScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name={AppRoute.FORGOT_PASSWORD}
+          component={ForgotPasswordScreen}
           options={{headerShown: false}}
         />
         {/* <Stack.Screen
