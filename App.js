@@ -5,6 +5,8 @@ import 'react-native-gesture-handler';
 import RNBootSplash from 'react-native-bootsplash';
 import Toast from 'react-native-toast-message';
 import {TOAST_CONFIG} from './src/core/toast/toast';
+import {Provider} from 'react-redux';
+import store from './src/store';
 
 const App = () => {
   useEffect(() => {
@@ -12,14 +14,16 @@ const App = () => {
   }, []);
 
   return (
-    <SafeAreaProvider>
-      <Router />
-      <Toast
-        config={TOAST_CONFIG}
-        ref={ref => Toast.setRef(ref)}
-        topOffset={0}
-      />
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <Router />
+        <Toast
+          config={TOAST_CONFIG}
+          ref={ref => Toast.setRef(ref)}
+          topOffset={0}
+        />
+      </SafeAreaProvider>
+    </Provider>
   );
 };
 
