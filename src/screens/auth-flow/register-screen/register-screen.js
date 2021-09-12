@@ -1,42 +1,53 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput} from 'react-native';
-import Button from '../../../components/Button/Button';
+import {View, Text, TextInput, useWindowDimensions} from 'react-native';
 import HeaderBack from '../../../components/HeaderBack/HeaderBack';
-import {COLORS} from '../../../constants/colors';
 import styles from './styles';
+import {TabView, SceneMap} from 'react-native-tab-view';
+import EmailStep from './components/email-password-step/email-password-step';
+import OnboardingPseudo from './components/select-pseudo-step/onboarding-pseudo';
+import OnboardingBirthday from './components/select-birthday-step/onboarding-birthday';
+import SelectGender from './components/select-gender-step/select-gender-step';
+import SelectCountry from './components/select-country-step/select-country-step';
+import OnboardingAvatar from './components/select-avatar-step/onboarding-avatar';
+import InviteFriends from './components/invite-friends-step/invite-friends-step';
+import {changePage} from '../../../store/onboarding/actions';
+import {useSelector} from 'react-redux';
+
+const renderScene = SceneMap({
+  first: () => <EmailStep />,
+  second: () => <OnboardingPseudo />,
+  third: () => <OnboardingBirthday />,
+  four: () => <SelectGender />,
+  five: () => <SelectCountry />,
+  six: () => <OnboardingAvatar />,
+  seven: () => <InviteFriends />,
+});
 
 const RegisterScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const layout = useWindowDimensions();
+
+  const index = useSelector(state => state.onboarding.activePage);
+
+  const [routes] = useState([
+    {key: 'first', title: 'First'},
+    {key: 'second', title: 'Second'},
+    {key: 'third', title: 'Third'},
+    {key: 'four', title: 'Four'},
+    {key: 'five', title: 'Five'},
+    {key: 'six', title: 'Six'},
+    {key: 'seven', title: 'Seven'},
+  ]);
 
   return (
     <>
-      <HeaderBack />
+      <HeaderBack onPress={index === 0 ? null : () => changePage(index - 1)} />
       <View style={styles.container}>
-        <Text style={styles.title}>Register</Text>
-        <TextInput
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          placeholder={'Your email'}
-          placeholderTextColor={COLORS.WHITE}
-          keyboardType="email-address"
-          autoCapitalize={false}
-        />
-        <TextInput
-          style={[styles.input, {marginBottom: 30}]}
-          value={password}
-          placeholder={'Your password'}
-          placeholderTextColor={COLORS.WHITE}
-          onChangeText={setPassword}
-          autoCapitalize={false}
-          secureTextEntry={true}
-        />
-        <Button
-          textColor={COLORS.WHITE}
-          title={'NEXT'}
-          buttonColor={COLORS.BLACK}
-          isFull={true}
+        <TabView
+          navigationState={{index, routes}}
+          renderScene={renderScene}
+          renderTabBar={() => null}
+          onIndexChange={changePage}
+          initialLayout={{width: layout.width}}
         />
       </View>
     </>

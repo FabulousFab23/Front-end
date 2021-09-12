@@ -4,6 +4,7 @@ const defaultState = {
   showModal: false,
   openedId: null,
   isLoading: false,
+  isTutorial: false,
 };
 
 export const HomeReducer = (state = defaultState, action) => {
@@ -14,6 +15,12 @@ export const HomeReducer = (state = defaultState, action) => {
         ...state,
         showModal: true,
         openedId: payload.id,
+      };
+    }
+    case TYPES.CHANGE_TUTORIAL_STATUS: {
+      return {
+        ...state,
+        isTutorial: payload.status,
       };
     }
     default:

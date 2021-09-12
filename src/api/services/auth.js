@@ -1,5 +1,6 @@
+import {post} from '..';
 import {API_URLS} from '../constants/urls';
 
-export function register(data) {
+export async function register(data) {
   return post(API_URLS.auth.register, data);
 }

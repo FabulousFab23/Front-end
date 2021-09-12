@@ -15,7 +15,7 @@ const Stack = createStackNavigator();
 const Router = () => {
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator initialRouteName={AppRoute.HOME}>
+      <Stack.Navigator initialRouteName={AppRoute.AUTH}>
         <Stack.Screen
           name={AppRoute.AUTH}
           component={AuthScreen}

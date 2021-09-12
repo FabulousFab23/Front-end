@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {View, Text} from 'react-native';
-import Button from '../../../components/Button/Button';
-import HeaderBack from '../../../components/HeaderBack/HeaderBack';
-import {COLORS} from '../../../constants/colors';
+import Button from '../../../../../components/Button/Button';
+import HeaderBack from '../../../../../components/HeaderBack/HeaderBack';
+import {COLORS} from '../../../../../constants/colors';
 import styles from '../../styles';
 
 const OnboardingAvatar = () => {

@@ -5,11 +5,14 @@ import {goBack} from '../../navigation';
 import {scale} from '../../utils/dimension';
 import ArrowBack from './img/arrow_back_icon.svg';
 
-const HeaderBack = () => {
+const HeaderBack = ({onPress = null}) => {
   return (
     <>
       <SafeAreaView style={styles.safeArea} />
-      <Pressable hitSlop={10} style={styles.button} onPress={goBack}>
+      <Pressable
+        hitSlop={10}
+        style={styles.button}
+        onPress={onPress ? onPress : goBack}>
         <ArrowBack width={scale(24)} height={scale(22.8)} />
       </Pressable>
     </>

@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 import axios from 'axios';
-import {getCachedItem} from '../core/services/cache';
 import {CACHE_KEYS} from '../constants/cache-keys';
+import {getCachedItem} from '../services/cache-storage';
 
 const makeRequest = axios;
 

@@ -7,3 +7,10 @@ export const openModal = () => {
     payload: {id: 1},
   });
 };
+
+export const changeTutorialStatus = ({status}) => {
+  dispatch({
+    type: TYPES.CHANGE_TUTORIAL_STATUS,
+    payload: {status},
+  });
+};
