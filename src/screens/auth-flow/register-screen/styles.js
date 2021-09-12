@@ -9,6 +9,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 30,
+    zIndex: 10,
+    elevation: 10,
   },
   title: {
     fontSize: scale(36),

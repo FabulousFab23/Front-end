@@ -53,7 +53,11 @@ const SelectCountry = () => {
           label: 'country',
           value: 'country',
         }}
-        containerStyle={[styles.input, {paddingLeft: 0}]}
+        containerStyle={[
+          styles.input,
+          {paddingLeft: 0, elevation: 10, zIndex: 10},
+          open ? {paddingBottom: 300} : null,
+        ]}
         style={{backgroundColor: COLORS.MAIN_BLACK}}
         dropDownContainerStyle={{backgroundColor: COLORS.MAIN_BLACK}}
         listItemLabelStyle={layoutStyles.text}
