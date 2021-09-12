@@ -12,6 +12,7 @@ import styles from './styles';
 import {TabView, SceneMap} from 'react-native-tab-view';
 import QuestionsList from './components/questions-list/questions-list';
 import AnswersModal from './components/answers-modal/answers-modal';
+import BottomComponent from '../../components/main-bottom-component/main-bottom-component';
 
 const FirstRoute = () => <QuestionsList />;
 
@@ -65,6 +66,7 @@ const HomeScreen = () => {
           onIndexChange={setIndex}
           initialLayout={{width: layout.width}}
         />
+        <BottomComponent />
       </View>
     </>
   );

@@ -5,12 +5,11 @@ export const AppRoute = {
   AUTH: 'Auth',
   LOGIN: 'Login',
   REGISTER: 'Register',
-  REGISTER_PSEUDO: 'Register Pseudo',
-  REGISTER_BIRTHDAY: 'Register Birthday',
-  REGISTER_AVATAR: 'Register Avatar',
   FORGOT_PASSWORD: 'Forgot Password',
   INVITE_SCREEN: 'Invite Screen',
   HOME: 'Home',
+  SETTINGS: 'Settings',
+  PROFILE: 'Profile',
 };
 
 export const navigationRef = React.createRef();

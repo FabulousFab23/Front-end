@@ -9,6 +9,7 @@ import EmojiIcon from '../../img/emoji_icon.svg';
 import PlayAnswer from '../../img/play_answer_icon.svg';
 import LikedIcon from '../../img/liked_pink_icon.svg';
 import UnlikedIcon from '../../img/unliked_icon.svg';
+import BottomComponent from '../../../../components/main-bottom-component/main-bottom-component';
 
 const AnswersModal = () => {
   const isVisible = useSelector(state => state.home.showModal);
@@ -37,6 +38,7 @@ const AnswersModal = () => {
     <Modal
       isVisible={isVisible}
       useNativeDriverForBackdrop={true}
+      style={{justifyContent: 'flex-end'}}
       backdropOpacity={0.9}>
       <View style={styles.container}>
         <Text style={styles.title}>“BAD GRADES AGAIN”</Text>
@@ -47,6 +49,7 @@ const AnswersModal = () => {
           <FlatList data={[{}, {}]} renderItem={renderItem} />
         </View>
       </View>
+      <BottomComponent isAnswerModal={true} />
     </Modal>
   );
 };
@@ -54,6 +57,7 @@ const AnswersModal = () => {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+    marginBottom: '30%',
   },
   answersContainer: {
     backgroundColor: COLORS.MAIN_BLACK,
