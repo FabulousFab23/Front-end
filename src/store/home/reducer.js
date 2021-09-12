@@ -5,6 +5,7 @@ const defaultState = {
   openedId: null,
   isLoading: false,
   isTutorial: false,
+  isAuth: false,
 };
 
 export const HomeReducer = (state = defaultState, action) => {
@@ -21,6 +22,19 @@ export const HomeReducer = (state = defaultState, action) => {
       return {
         ...state,
         isTutorial: payload.status,
+      };
+    }
+    case TYPES.LOGIN_SUCCESS: {
+      return {
+        ...state,
+        isAuth: true,
+      };
+    }
+    case TYPES.CLOSE_MODAL: {
+      return {
+        ...state,
+        showModal: false,
+        openedId: null,
       };
     }
     default:

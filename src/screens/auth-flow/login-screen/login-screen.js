@@ -4,6 +4,7 @@ import Button from '../../../components/Button/Button';
 import HeaderBack from '../../../components/HeaderBack/HeaderBack';
 import {COLORS} from '../../../constants/colors';
 import {AppRoute, navigate} from '../../../navigation';
+import {signIn} from '../../../store/home/actions';
 import styles from './styles';
 
 const LoginScreen = () => {
@@ -12,6 +13,10 @@ const LoginScreen = () => {
 
   const handleForgotPassword = () => {
     navigate(AppRoute.FORGOT_PASSWORD, {});
+  };
+
+  const loginUser = () => {
+    signIn({email, password});
   };
 
   return (
@@ -40,13 +45,15 @@ const LoginScreen = () => {
         <Button
           textColor={COLORS.WHITE}
           title={'NEXT'}
+          onPress={loginUser}
           buttonColor={COLORS.BLACK}
           isFull={true}
         />
         <Pressable
           style={styles.passwordLostContainer}
           hitSlop={5}
-          onPress={handleForgotPassword}>
+          // onPress={handleForgotPassword}>
+        >
           <Text style={styles.passwordLostText}>Forgot password</Text>
         </Pressable>
       </View>

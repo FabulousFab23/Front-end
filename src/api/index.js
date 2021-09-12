@@ -5,7 +5,7 @@ import {getCachedItem} from '../services/cache-storage';
 
 const makeRequest = axios;
 
-const baseURL = 'http://127.0.0.1:4000';
+const baseURL = 'https://socialvoiceapp.tk';
 
 function onSuccess(response) {
   return response;
@@ -21,7 +21,7 @@ const onGetToken = async () => {
 
 const onFail = async err => {
   const {response} = err;
-
+  console.log('ERROR RESPONSE', response);
   // if (response.status === HttpStatusCode.UNAUTHORIZED) {
   //   Toast.error(translate('SESSION_EXPIRED'));
   //   dispatch(logOut());
@@ -29,7 +29,7 @@ const onFail = async err => {
   //   await navigate(AppRoute.LOGIN, {});
   // }
 
-  throw err;
+  // throw err;
 };
 
 makeRequest.interceptors.request.use(

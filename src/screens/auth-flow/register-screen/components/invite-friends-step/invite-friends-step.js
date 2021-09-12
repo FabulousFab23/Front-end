@@ -9,7 +9,9 @@ import WhatsupIcon from '../../img/whatsup_icon.svg';
 import {scale, verticalScale} from '../../../../../utils/dimension';
 import {FONTS} from '../../../../../constants/fonts';
 import {AppRoute, navigate} from '../../../../../navigation';
-import {changeTutorialStatus} from '../../../../../store/home/actions';
+import {changeTutorialStatus, signIn} from '../../../../../store/home/actions';
+import {finishOnboarding} from '../../../../../store/onboarding/actions';
+import {useSelector} from 'react-redux';
 
 const NETWORKS_TO_SHARE = [
   {
@@ -30,9 +32,12 @@ const NETWORKS_TO_SHARE = [
 ];
 
 const InviteFriends = () => {
-  const finishOnboarding = () => {
+  const user = useSelector(state => state.onboarding.user);
+
+  const finishRegistration = () => {
     changeTutorialStatus({status: true});
     navigate(AppRoute.HOME, {});
+    finishOnboarding({user});
   };
 
   return (
@@ -64,7 +69,7 @@ const InviteFriends = () => {
       <Button
         title={'FINISH'}
         isFull={true}
-        onPress={finishOnboarding}
+        onPress={finishRegistration}
         buttonColor={COLORS.BLACK}
         textColor={COLORS.WHITE}
       />

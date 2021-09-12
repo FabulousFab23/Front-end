@@ -19,8 +19,8 @@ const renderScene = SceneMap({
   third: () => <OnboardingBirthday />,
   four: () => <SelectGender />,
   five: () => <SelectCountry />,
-  six: () => <OnboardingAvatar />,
-  seven: () => <InviteFriends />,
+  six: () => <InviteFriends />,
+  // seven: () => <InviteFriends />,
 });
 
 const RegisterScreen = () => {
@@ -35,12 +35,14 @@ const RegisterScreen = () => {
     {key: 'four', title: 'Four'},
     {key: 'five', title: 'Five'},
     {key: 'six', title: 'Six'},
-    {key: 'seven', title: 'Seven'},
+    // {key: 'seven', title: 'Seven'},
   ]);
 
   return (
     <>
-      <HeaderBack onPress={index === 0 ? null : () => changePage(index - 1)} />
+      <HeaderBack
+        onPress={index === 0 ? null : () => changePage({nextPage: index - 1})}
+      />
       <View style={styles.container}>
         <TabView
           navigationState={{index, routes}}

@@ -10,6 +10,7 @@ import PlayAnswer from '../../img/play_answer_icon.svg';
 import LikedIcon from '../../img/liked_pink_icon.svg';
 import UnlikedIcon from '../../img/unliked_icon.svg';
 import BottomComponent from '../../../../components/main-bottom-component/main-bottom-component';
+import {closeModal} from '../../../../store/home/actions';
 
 const AnswersModal = () => {
   const isVisible = useSelector(state => state.home.showModal);
@@ -37,6 +38,7 @@ const AnswersModal = () => {
   return (
     <Modal
       isVisible={isVisible}
+      onBackdropPress={() => closeModal()}
       useNativeDriverForBackdrop={true}
       style={{justifyContent: 'flex-end'}}
       backdropOpacity={0.9}>

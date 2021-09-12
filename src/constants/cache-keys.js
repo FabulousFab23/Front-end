@@ -1,3 +1,4 @@
 export const CACHE_KEYS = {
-  TOKEN: '',
+  TOKEN: 'TOKEN',
+  REFRESH_TOKEN: 'REFRESH_TOKEN',
 };

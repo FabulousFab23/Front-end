@@ -1,9 +1,8 @@
-import React, {useState} from 'react';
-import {View, TextInput, Text, Alert} from 'react-native';
-import {register} from '../../../../../api/services/auth';
+import React, {useCallback, useState} from 'react';
+import {TextInput, Text, Alert} from 'react-native';
 import Button from '../../../../../components/Button/Button';
 import {COLORS} from '../../../../../constants/colors';
-import {changePage, signUp} from '../../../../../store/onboarding/actions';
+import {signUp} from '../../../../../store/onboarding/actions';
 import {isValidEmail} from '../../helpers/validation';
 import styles from '../../styles';
 
@@ -12,7 +11,7 @@ const EmailStep = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const registerUser = async () => {
+  const registerUser = useCallback(async () => {
     setIsLoading(true);
 
     if (!isValidEmail(email)) {
@@ -29,7 +28,7 @@ const EmailStep = () => {
     await signUp({email, password});
 
     setIsLoading(false);
-  };
+  }, [email, password]);
 
   return (
     <>
