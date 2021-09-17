@@ -17,13 +17,17 @@ const BottomComponent = ({isAnswerModal = false}) => {
         <Text style={styles.recordText}>Record your answer</Text>
       )}
       <View style={styles.buttons}>
-        <TouchableOpacity onPress={() => navigate(AppRoute.SETTINGS, {})}>
+        <TouchableOpacity
+          onPress={() => navigate(AppRoute.SETTINGS, {})}
+          activeOpacity={0.7}>
           <SettingsIcon width={scale(30.7)} height={verticalScale(31.7)} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.microIcon}>
           <MicroIcon width={scale(58)} height={verticalScale(54.4)} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigate(AppRoute.PROFILE, {})}>
+        <TouchableOpacity
+          onPress={() => navigate(AppRoute.PROFILE, {})}
+          activeOpacity={0.7}>
           <ProfileIcon width={scale(22.7)} height={verticalScale(27)} />
         </TouchableOpacity>
       </View>

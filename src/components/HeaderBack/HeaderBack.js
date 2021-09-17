@@ -4,8 +4,9 @@ import {COLORS} from '../../constants/colors';
 import {goBack} from '../../navigation';
 import {scale} from '../../utils/dimension';
 import ArrowBack from './img/arrow_back_icon.svg';
+import AnotherArrowBack from './img/arrow_back_another';
 
-const HeaderBack = ({onPress = null}) => {
+const HeaderBack = ({onPress = null, anotherIcon = true}) => {
   return (
     <>
       <SafeAreaView style={styles.safeArea} />
@@ -13,7 +14,11 @@ const HeaderBack = ({onPress = null}) => {
         hitSlop={10}
         style={styles.button}
         onPress={onPress ? onPress : goBack}>
-        <ArrowBack width={scale(24)} height={scale(22.8)} />
+        {anotherIcon ? (
+          <AnotherArrowBack width={scale(24)} height={scale(22.8)} />
+        ) : (
+          <ArrowBack width={scale(24)} height={scale(22.8)} />
+        )}
       </Pressable>
     </>
   );

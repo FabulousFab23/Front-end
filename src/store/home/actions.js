@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Alert} from 'react-native';
 import {dispatch} from '..';
 import {login} from '../../api/services/auth';
@@ -41,4 +42,9 @@ export const signIn = async ({email, password}) => {
   } catch (e) {
     Alert.alert('Sorry', 'User not found');
   }
+};
+
+export const logoutFromAccount = async () => {
+  await AsyncStorage.clear();
+  navigate(AppRoute.AUTH);
 };
